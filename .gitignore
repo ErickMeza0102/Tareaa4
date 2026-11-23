@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+data/
+wandb/
+.pytest_cache/
