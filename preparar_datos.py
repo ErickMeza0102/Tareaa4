@@ -66,7 +66,14 @@ def preparar_lfw():
 
     x = np.empty((len(lfw.images), SIZE, SIZE, 3), dtype=np.uint8)
     for i, img in enumerate(lfw.images):
-        pil = Image.fromarray(np.asarray(img).astype(np.uint8)).convert("RGB")
+        arr = np.asarray(img)
+        # sklearn entrega las imagenes como float en [0, 1]; hay que llevar
+        # ese rango a 0-255 antes de convertirlas a uint8.
+        if arr.dtype != np.uint8:
+            if arr.max() <= 1.0:
+                arr = arr * 255.0
+            arr = np.clip(arr, 0, 255).astype(np.uint8)
+        pil = Image.fromarray(arr).convert("RGB")
         x[i] = np.asarray(pil.resize((SIZE, SIZE), Image.BILINEAR))
 
     pos = np.where(y == idx_objetivo)[0]
