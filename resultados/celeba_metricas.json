@@ -1,0 +1,7 @@
+{
+  "epocas_entrenadas": 3,
+  "mejor_val_loss": 0.45233169198036194,
+  "mejor_val_binary_accuracy": 0.79708331823349,
+  "parametros_cnn": 285544,
+  "parametros_base_convolucional": 242240
+}
