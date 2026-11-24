@@ -19,7 +19,24 @@ que se seguiría con fotos propias.
 | Datos | `preparar_datos.py` | Descarga 10 000 imágenes de CelebA (64×64) y LFW; arma los conjuntos balanceados. |
 | (a) Pre-entrenamiento | `entrenar_celeba.py` | CNN con 40 salidas sigmoide para los atributos de CelebA. Guarda `conv_base`. |
 | (b) Clasificador congelado | `clasificador_transfer.py` | Congela `conv_base`, agrega una capa densa y una salida; entrena solo el clasificador. |
-| (c) Fine-tuning | `fine_tuning.py` | Descongela el último bloque convolucional y refina con `lr=1e-4`. |
+| (c) Fine-tuning | `fine_tuning.py` | Calienta el último bloque y luego descongela toda la base con `lr=5e-4`. |
+
+## Resultados
+
+Resumen sobre el conjunto de prueba (160 imágenes balanceadas):
+
+| Modelo | AUC | Exactitud | F1 |
+|---|---|---|---|
+| (a) CNN de atributos de CelebA | — | 0.797 (exactitud binaria media por atributo) | — |
+| (b) Base congelada + clasificador | 0.578 | 0.556 | 0.523 |
+| (c) Fine-tuning | **0.967** | **0.888** | **0.886** |
+| Referencia: misma CNN desde cero | 0.829 | — | — |
+
+La base congelada no alcanza a separar identidades porque las características
+pre-entrenadas describen atributos (sonrisa, lentes, pelo), no identidades. El
+fine-tuning, en cambio, adapta las capas convolucionales y las estadísticas de
+BatchNorm al nuevo dominio y supera incluso al mismo modelo entrenado desde
+cero. Los detalles están en `reporte.pdf`.
 
 ## Archivos
 
@@ -27,6 +44,8 @@ que se seguiría con fotos propias.
 - `entrenar_celeba.py`: etapa (a), atributos de CelebA.
 - `clasificador_transfer.py`: etapa (b), base congelada.
 - `fine_tuning.py`: etapa (c), refinamiento.
+- `metricas.py`: métricas, umbral de validación y matrices de confusión.
+- `rehacer_binario.py`: regenera sólo `data/binario.npz` sin volver a bajar CelebA.
 - `modelos/`: `celeba_cnn.keras`, `conv_base.keras`, `clasificador_frozen.keras`, `clasificador_finetuned.keras`.
 - `plots/`: curvas de entrenamiento, matrices de confusión, ROC y ejemplos.
 - `resultados/`: historiales CSV y métricas JSON.
